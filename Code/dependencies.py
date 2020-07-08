@@ -15,6 +15,9 @@ from pandas.plotting import scatter_matrix
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import LabelEncoder
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.neural_network import MLPClassifier
+from xgboost import XGBClassifier#
+from sklearn.model_selection import RandomizedSearchCV
 from sklearn.model_selection import cross_val_score
 
 from jupyterthemes import jtplot
@@ -22,3 +25,5 @@ jtplot.style(theme='chesterish', context='notebook', ticks=True, grid=False)
 
 from IPython.core.interactiveshell import InteractiveShell
 InteractiveShell.ast_node_interactivity = "all"
+
+from scipy.stats import randint as sp_randint
