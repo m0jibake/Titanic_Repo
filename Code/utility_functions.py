@@ -128,9 +128,6 @@ def training_proc(df,features):
     print('XgBoost:')
     report_results(rand_cv_xgBoost_fitted.cv_results_)
 
-
-
-
     rand_cv_rf = RandomizedSearchCV(estimator=RandomForestClassifier(n_estimators=100, random_state=42), param_distributions=rf_dist, n_iter=10, cv=3, refit=True, return_train_score=True, random_state=42)
     rand_cv_rf_fitted = rand_cv_rf.fit(X_train, y_train)
     print('\nRandom Forest:')
@@ -161,3 +158,52 @@ def encode_categorical_vars(df, dummy_variables):
         aux = pd.get_dummies(df[var], prefix=var)
         df = pd.concat((df,aux), axis=1)
     return df
+
+
+def test_proc(df, features, fitted_estimators):
+    '''
+    This functions uses fitted estimators and reports the accuracy on a test set.
+
+    INPUT PARAMETERS:
+    df_test --- the pd.DataFrame containing the test data
+    features --- The column names of df_test which should be actually used. Provide as list, e.g. ['feature1', 'feature2', ...]. If all columns of df_test should be used, specify this parameter
+    as an empty list, i.e. []
+    fitted_estimators --- The return object of the training_proc() function
+    '''
+
+    # check if df is a pd.DataFrame
+    if not isinstance(df[features], pd.DataFrame):
+        return print('Error: df is not of type pd.DataFrame.')
+
+    # check if columns of df are of type string
+    str_vars = list(df[features].dtypes[df[features].dtypes == np.object].index)
+    if len(str_vars) > 0:
+        return print('Error: The following columns contain Strings: {0}. \n Please remove Strings from the dataframe.'.format(str_vars))
+
+    # check for missing values
+    mv_tbl = df[features].isnull().sum()
+    if mv_tbl.sum() > 0:
+        return print('Error: There are missing values in your dataframe. The columns and number of missing values is: \n\n{0} \
+        \n\nIf you want to display the rows with missing values, execute df[df.isnull().any(axis=1)] '.format(pd.DataFrame(mv_tbl[mv_tbl>0], columns=['Count'])))
+
+
+    if features == []:
+        features = list(df.columns.values)
+
+    y_test = df['Survived']
+    X_test = df[features].drop(columns=['Survived'], axis=1)
+
+
+
+
+    xgBoost_predictions = fitted_estimators[0].predict(X_test)
+    xgBoost_acc = accuracy_score(y_test, xgBoost_predictions)
+    print('Test accuracy of XgBoost: {:.4}'.format(xgBoost_acc))
+
+    rf_predictions = fitted_estimators[1].predict(X_test)
+    rf_acc = accuracy_score(y_test, rf_predictions)
+    print('Test accuracy of the Random Forest: {:.4}'.format(rf_acc))
+
+    ann_predictions = fitted_estimators[2].predict(X_test)
+    ann_acc = accuracy_score(y_test, ann_predictions)
+    print('Test accuracy of the Neural Network: {:.4}'.format(ann_acc))

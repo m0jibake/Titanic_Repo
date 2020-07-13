@@ -19,6 +19,7 @@ from sklearn.neural_network import MLPClassifier
 from xgboost import XGBClassifier#
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.model_selection import cross_val_score
+from sklearn.metrics import accuracy_score
 
 from jupyterthemes import jtplot
 jtplot.style(theme='chesterish', context='notebook', ticks=True, grid=False)
