@@ -4,6 +4,17 @@
 from dependencies import *
 
 def split_training_set(data, rel_test_size):
+    '''
+    A function to split a dataset into a training and a test set. The observations get randomly assigned.
+
+    INPUT PARAMETERS:
+    data --- all the available data. Provide as pd.dataframe
+    rel_test_size --- The size of the test set, e.g. 10% = 0.1
+
+    RETURN OBJECT:
+    training_set --- a pd.DataFrame
+    test_set --- a pd.DataFrame
+    '''
     np.random.seed(42)
     abs_test_size = int(rel_test_size*data.shape[0])
     random_indices = np.random.permutation(data.shape[0])
@@ -11,7 +22,7 @@ def split_training_set(data, rel_test_size):
     training_indices = random_indices[abs_test_size:]
     test_set = data.iloc[test_indices]
     training_set = data.iloc[training_indices]
-    return pd.DataFrame(test_set, columns = data.columns), pd.DataFrame(training_set, columns = data.columns)
+    return pd.DataFrame(training_set, columns = data.columns), pd.DataFrame(test_set, columns = data.columns)
 
 
 def report_results(results, n_top=1, metric='Accuracy'):
@@ -62,7 +73,7 @@ def training_proc(df,features):
     features --- the columns of the dataframe which should serve as the predictors. Provide as a list, i.e. ['feature1', 'feature2', ...]
 
     RETURN OBJECT
-    a list containing three items, in particular the best performing estimator for each algorithm. 
+    a list containing three items, in particular the best performing estimator for each algorithm.
     '''
 
     # check if df is a pd.DataFrame
@@ -131,3 +142,22 @@ def training_proc(df,features):
     report_results(rand_cv_ann_fitted.cv_results_)
 
     return list([rand_cv_xgBoost_fitted.best_estimator_, rand_cv_rf_fitted.best_estimator_, rand_cv_ann_fitted.best_estimator_])
+
+
+
+
+def encode_categorical_vars(df, dummy_variables):
+    '''
+    A function to encode categorical variables via the dummy variable approach (aka one hot encoding). The dummy variables get the original variable name as prefix.
+
+    INPUT PARAMETERS:
+    df --- a pd.DataFrame
+    dummy_variables --- a list of the columns to be encoded. Provide as list, e.g. ['var1', 'var2'].
+
+    RETURN OBJECT:
+    The original dataframe but now including the new dummy variables.
+    '''
+    for var in dummy_variables:
+        aux = pd.get_dummies(df[var], prefix=var)
+        df = pd.concat((df,aux), axis=1)
+    return df
