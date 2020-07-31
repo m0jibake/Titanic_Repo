@@ -119,21 +119,21 @@ def training_proc(df,features):
         }
 
     ann_dist = {
-        'hidden_layer_sizes': [10,100,300,1000],
+        'hidden_layer_sizes': [10, 100, 1000, (10,10), (100,100), (300,300), (1000,1000), (10, 10, 10), (100,100,100), (300,300,300), (1000,1000,1000), (1000,500,100)],
         'alpha': [0.0001, 0.001, 0.01, 0.1]
         }
 
-    rand_cv_xgBoost = RandomizedSearchCV(estimator=XGBClassifier(), param_distributions=xgBoost_dist, n_iter=10, cv=3, refit=True, return_train_score=True, random_state=42)
+    rand_cv_xgBoost = RandomizedSearchCV(estimator=XGBClassifier(), param_distributions=xgBoost_dist, n_iter=10, cv=3, refit=True, return_train_score=True)
     rand_cv_xgBoost_fitted = rand_cv_xgBoost.fit(X_train, y_train)
     print('XgBoost:')
     report_results(rand_cv_xgBoost_fitted.cv_results_)
 
-    rand_cv_rf = RandomizedSearchCV(estimator=RandomForestClassifier(n_estimators=100, random_state=42), param_distributions=rf_dist, n_iter=10, cv=3, refit=True, return_train_score=True, random_state=42)
+    rand_cv_rf = RandomizedSearchCV(estimator=RandomForestClassifier(n_estimators=100), param_distributions=rf_dist, n_iter=10, cv=3, refit=True, return_train_score=True, random_state=42)
     rand_cv_rf_fitted = rand_cv_rf.fit(X_train, y_train)
     print('\nRandom Forest:')
     report_results(rand_cv_rf_fitted.cv_results_)
 
-    rand_cv_ann = RandomizedSearchCV(estimator=MLPClassifier(early_stopping=True, random_state=42), param_distributions=ann_dist, n_iter=10, cv=3, refit=True, return_train_score=True, random_state=42)
+    rand_cv_ann = RandomizedSearchCV(estimator=MLPClassifier(learning_rate='adaptive', early_stopping=True), param_distributions=ann_dist, n_iter=10, cv=3, refit=True, return_train_score=True, random_state=42)
     rand_cv_ann_fitted = rand_cv_ann.fit(X_train, y_train)
     print('\nANN:')
     report_results(rand_cv_ann_fitted.cv_results_)
