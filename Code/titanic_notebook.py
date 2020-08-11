@@ -73,6 +73,13 @@ df_train.drop('Deck', axis=1, inplace=True)
 
 df_train.head()
 
+df_train['fam_size'] = df_train['SibSp'] + df_train['Parch']
+
+df_train['travels_alone'] = 0
+df_train['travels_alone'] = df_train['fam_size'].apply(lambda x: 1 if x==0 else 0)
+
+df_train.head()
+
 # + active=""
 # All pre-processing done? Then proceed with the training procedure
 #
