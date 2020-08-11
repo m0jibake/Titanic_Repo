@@ -5,7 +5,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.5.2
+#       jupytext_version: 1.4.1
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -17,6 +17,7 @@
 # %run ./utility_functions.py
 
 pd.set_option('display.max_columns', 500)
+pd.set_option('display.max_rows', 500)
 
 repo_directory = Path('D:\Kaggle\Titanic_Repo')
 code_path = repo_directory / 'Code'
@@ -26,7 +27,7 @@ df = pd.read_csv(data_path / 'train.csv')
 
 df.info()
 
-df.head()
+df.head(80)
 
 df.describe()
 
@@ -55,6 +56,23 @@ df_train['Age_multiplied'] = df_train['Age']/1000
 
 df_train.head(10)
 
+df_train['Deck'] = df_train["Cabin"].str[0]
+
+df_train.head(20)
+
+df_train['Deck'].unique()
+
+df_train['Deck'].fillna('Z', inplace=True)
+
+# Apparently there is one person with Deck 'T', which seems to be an error on the Data. Replace by 'Z'.
+df_train.loc[df_train['Deck']=='T', 'Deck'] = 'Z'
+
+df_train = encode_categorical_vars(df_train, ['Deck'])
+
+df_train.drop('Deck', axis=1, inplace=True)
+
+df_train.head()
+
 # + active=""
 # All pre-processing done? Then proceed with the training procedure
 #
@@ -64,10 +82,12 @@ df_train.head(10)
 
 #Standard train
 training_example = training_proc(df_train,['Survived', 'Pclass', 'Age','Fare', 'Sex_female', 'Sex_male', 
-                                           'Embarked_C', 'Embarked_Q', 'Embarked_S'])
+                                           'Embarked_C', 'Embarked_Q', 'Embarked_S', 'Deck_A', 'Deck_B', 'Deck_C', 'Deck_D', 'Deck_E', 'Deck_F', 'Deck_G'])
+
+training_example
 
 #Experimental train with multiplied Age
-training_example = training_proc(df_train,['Survived', 'Pclass', 'Age_multiplied','Fare', 
+training_example = training_proc(df_train,['Survived', 'Pclass','Fare', 
                                            'Sex_female', 'Sex_male', 'Embarked_C', 'Embarked_Q', 'Embarked_S'])
 
 # + active=""
