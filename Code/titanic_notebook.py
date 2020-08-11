@@ -80,6 +80,22 @@ df_train['travels_alone'] = df_train['fam_size'].apply(lambda x: 1 if x==0 else 
 
 df_train.head()
 
+df_train['Title'] = df_train['Name'].str.split(",", n = 1, expand = True)[1].str.split(' ', n=2, expand=True)[1] 
+
+
+def rare_title(x):
+    if x not in ['Mr.', 'Miss.', 'Mrs.', 'Master.']:
+        return 'Rare'
+    return x
+
+
+df_train['Title'] = df_train['Title'].apply(rare_title)
+
+df_train
+
+# + active=""
+#
+
 # + active=""
 # All pre-processing done? Then proceed with the training procedure
 #
@@ -89,7 +105,8 @@ df_train.head()
 
 #Standard train
 training_example = training_proc(df_train,['Survived', 'Pclass', 'Age','Fare', 'Sex_female', 'Sex_male', 
-                                           'Embarked_C', 'Embarked_Q', 'Embarked_S', 'Deck_A', 'Deck_B', 'Deck_C', 'Deck_D', 'Deck_E', 'Deck_F', 'Deck_G'])
+                                           'Embarked_C', 'Embarked_Q', 'Embarked_S', 'Deck_A', 'Deck_B', 'Deck_C', 'Deck_D', 'Deck_E', 'Deck_F', 'Deck_G',
+                                          'fam_size', 'travels_alone'])
 
 training_example
 
