@@ -143,7 +143,7 @@ def training_proc(df,features):
 
 
 
-def encode_categorical_vars(df, dummy_variables):
+def encode_categorical_vars(df, cat_columns):
     '''
     A function to encode categorical variables via the dummy variable approach (aka one hot encoding). The dummy variables get the original variable name as prefix.
 
@@ -154,9 +154,24 @@ def encode_categorical_vars(df, dummy_variables):
     RETURN OBJECT:
     The original dataframe but now including the new dummy variables.
     '''
-    for var in dummy_variables:
-        aux = pd.get_dummies(df[var], prefix=var)
+    for var in cat_columns:
+    #Check for NaNs
+        if df[var].isnull().values.any() == True:
+            print('\nWarning: Column has NaN: ' + var)
+    
+    #Check for one expression and throw error message
+        if df[var].nunique() == 1:
+            print('Column has only one expresion: ' + var)
+            continue
+                
+    #Create dummies
+        aux = pd.get_dummies(df[var], prefix=var, dummy_na=False)
         df = pd.concat((df,aux), axis=1)
+    
+    #Check for exactly two expressions and drop unessesary column
+        if df[var].nunique() == 2:
+            df = df.iloc[:, :-1]
+        
     return df
 
 

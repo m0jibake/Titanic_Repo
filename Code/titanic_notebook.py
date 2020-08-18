@@ -19,6 +19,26 @@
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.max_rows', 500)
 
+# +
+#Testing Area
+
+data_test = {'Sex': ['male', 'female', 'male', 'male'], 'Name': ['a', 'b', 'c', 'a']}
+df_test = pd.DataFrame.from_dict(data_test)
+#df_test['Sex'].isnull().sum()
+df_test.head()
+
+if df_test['Sex'].isnull().values.any() == True:
+    print('\nWarning: tetsttest')
+    
+df_test = encode_categorical_vars(df_test, ['Sex', 'Name'])
+
+df_test['Sex'].nunique()
+
+
+
+df_test.head()
+# -
+
 repo_directory = Path('D:\Kaggle\Titanic_Repo')
 code_path = repo_directory / 'Code'
 data_path = repo_directory / 'Data'
@@ -46,7 +66,7 @@ print('The test data contains {0} columns and {1} rows'.format(df_test.shape[1],
 # encode_categorical_vars() --- to transform categorical variables to numerical ones via the dummy variable approach
 # -
 
-#Encode Sex and Embarked variables
+#Encode Embarked variables
 df_train = encode_categorical_vars(df_train, ['Sex', 'Embarked'])
 #Set mean for 'NaN' fields in Age
 df_train['Age'].fillna(df_train['Age'].mean(), inplace = True)
