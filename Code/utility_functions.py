@@ -123,17 +123,17 @@ def training_proc(df,features):
         'alpha': [0.0001, 0.001, 0.01, 0.1]
         }
 
-    rand_cv_xgBoost = RandomizedSearchCV(estimator=XGBClassifier(), param_distributions=xgBoost_dist, n_iter=10, cv=3, refit=True, return_train_score=True)
+    rand_cv_xgBoost = RandomizedSearchCV(estimator=XGBClassifier(), param_distributions=xgBoost_dist, n_iter=100, cv=3, refit=True, return_train_score=True)
     rand_cv_xgBoost_fitted = rand_cv_xgBoost.fit(X_train, y_train)
     print('XgBoost:')
     report_results(rand_cv_xgBoost_fitted.cv_results_)
 
-    rand_cv_rf = RandomizedSearchCV(estimator=RandomForestClassifier(n_estimators=100), param_distributions=rf_dist, n_iter=10, cv=3, refit=True, return_train_score=True, random_state=42)
+    rand_cv_rf = RandomizedSearchCV(estimator=RandomForestClassifier(n_estimators=100), param_distributions=rf_dist, n_iter=100, cv=3, refit=True, return_train_score=True, random_state=42)
     rand_cv_rf_fitted = rand_cv_rf.fit(X_train, y_train)
     print('\nRandom Forest:')
     report_results(rand_cv_rf_fitted.cv_results_)
 
-    rand_cv_ann = RandomizedSearchCV(estimator=MLPClassifier(learning_rate='adaptive', early_stopping=True), param_distributions=ann_dist, n_iter=10, cv=3, refit=True, return_train_score=True, random_state=42)
+    rand_cv_ann = RandomizedSearchCV(estimator=MLPClassifier(learning_rate='adaptive', early_stopping=True), param_distributions=ann_dist, n_iter=100, cv=3, refit=True, return_train_score=True, random_state=42)
     rand_cv_ann_fitted = rand_cv_ann.fit(X_train, y_train)
     print('\nANN:')
     report_results(rand_cv_ann_fitted.cv_results_)
@@ -222,3 +222,9 @@ def test_proc(df, features, fitted_estimators):
     ann_predictions = fitted_estimators[2].predict(X_test)
     ann_acc = accuracy_score(y_test, ann_predictions)
     print('Test accuracy of the Neural Network: {:.4}'.format(ann_acc))
+
+
+def rare_title(x):
+    if x not in ['Mr.', 'Miss.', 'Mrs.', 'Master.']:
+        return 'Rare'
+    return x
